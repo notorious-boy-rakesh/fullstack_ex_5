@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html ng-app="todoApp">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+
+    <style>
+        /* ---------- BACKGROUND ---------- */
+        body {
+            margin: 0;
+            font-family: Inter, Segoe UI, sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #ede9fe, #fce7f3, #ecfeff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* ---------- MAIN CARD ---------- */
+        .container {
+            width: 380px;
+            padding: 25px;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        /* ---------- TITLE ---------- */
+        h2 {
+            margin: 0 0 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #1f2937;
+            letter-spacing: .5px;
+        }
+
+        /* ---------- INPUT AREA ---------- */
+        .inputBox {
+            display: flex;
+            gap: 10px;
+        }
+
+        .inputBox input {
+            flex: 1;
+            padding: 11px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            outline: none;
+            font-size: 14px;
+            background: #ffffff;
+        }
+
+        .inputBox input:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 2px #e0e7ff;
+        }
+
+        /* ADD BUTTON */
+        .inputBox button {
+            padding: 11px 18px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(135deg, #6366f1, #3b82f6);
+            transition: .2s;
+        }
+
+        .inputBox button:hover {
+            transform: scale(1.03);
+        }
+
+        /* ---------- STATS ---------- */
+        .stats {
+            margin: 18px 0;
+            text-align: center;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* ---------- TASK ---------- */
+        .task {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            background: linear-gradient(145deg, #ffffff, #f1f5f9);
+            border: 1px solid #e5e7eb;
+            transition: .15s;
+        }
+
+        .task:hover {
+            transform: scale(1.01);
+        }
+
+        .task span {
+            flex: 1;
+            margin-left: 10px;
+            color: #111827;
+        }
+
+        /* COMPLETED */
+        .done {
+            text-decoration: line-through;
+            color: #9ca3af;
+        }
+
+        /* DELETE BUTTON */
+        .delete {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            background: linear-gradient(135deg, #fb7185, #ef4444);
+        }
+
+        .delete:hover {
+            opacity: .9;
+        }
+
+        /* ---------- FILTER BUTTONS ---------- */
+        .filters {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .filters button {
+            margin: 4px;
+            padding: 7px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: #374151;
+            background: linear-gradient(135deg, #f1f5f9, #e0e7ff);
+            transition: .2s;
+        }
+
+        .filters button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body ng-controller="todoCtrl">
+
+    <div class="container">
+
+        <h2>Task Manager</h2>
+
+        <div class="inputBox">
+            <input type="text" ng-model="newTask" placeholder="Enter a task">
+            <button ng-click="add()">Add</button>
+        </div>
+
+        <div class="stats">
+            {{remaining()}} remaining out of {{tasks.length}}
+        </div>
+
+        <div class="task" ng-repeat="t in tasks | filter:{done:status}">
+            <input type="checkbox" ng-model="t.done">
+            <span ng-class="{'done':t.done}">{{t.name}}</span>
+            <button class="delete" ng-click="remove($index)">×</button>
+        </div>
+
+        <div class="filters">
+            <button ng-click="status=''">All</button>
+            <button ng-click="status=false">Pending</button>
+            <button ng-click="status=true">Completed</button>
+        </div>
+
+    </div>
+
+    <script>
+        angular.module("todoApp", [])
+            .controller("todoCtrl", function ($scope) {
+
+                $scope.tasks = [
+                    { name: "Finish UI design", done: false },
+                    { name: "Submit project", done: true }
+                ];
+
+                $scope.add = function () {
+                    if ($scope.newTask) {
+                        $scope.tasks.push({ name: $scope.newTask, done: false });
+                        $scope.newTask = "";
+                    }
+                };
+
+                $scope.remove = function (i) {
+                    $scope.tasks.splice(i, 1);
+                };
+
+                $scope.remaining = function () {
+                    return $scope.tasks.filter(t => !t.done).length;
+                };
+
+            });
+    </script>
+
+</body>
+
+</html>
